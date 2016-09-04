@@ -1,0 +1,4 @@
+________________________________________________________________________
+  Spring Security :: Sample Spring Security :: OAuth Frontend Angular ${application.formatted-version}
+  -> http://localhost:7711/oauth-frontend-angular
+-------------------------------------------------------------------------

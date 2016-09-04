@@ -1,0 +1,5 @@
+_________________________________________________________________________
+
+  Spring Security :: Sample Spring Cloud Security :: OAuth Server ${application.formatted-version}
+  -> http://localhost:7710/oauth-server
+-------------------------------------------------------------------------

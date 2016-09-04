@@ -1,0 +1,150 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>1.2.5.RELEASE</version>
+		<relativePath />
+	</parent>
+
+	<groupId>br.com.sample.spring</groupId>
+	<artifactId>samples</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>samples</name>
+	<description>Projeto pai com configurações gerais dos exemplos </description>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<java.version>1.8</java.version>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<spring.cloud.version>Angel.SR3</spring.cloud.version>
+		<version.jboss.maven.plugin>7.4.Final</version.jboss.maven.plugin>
+		<version.jboss.bom.wfk>2.7.0-redhat-1</version.jboss.bom.wfk>
+		<version.jboss.bom.eap>6.3.2.GA</version.jboss.bom.eap>
+		<version.maven.surefire>2.13</version.maven.surefire>
+		<version.maven.war>2.3</version.maven.war>
+		<version.standard.taglibs>1.1.2</version.standard.taglibs>
+		<version.commons.logging>1.1.1</version.commons.logging>
+		<version.cglib>2.2</version.cglib>
+		<version.h2db>1.3.165</version.h2db>
+		<version.jackson>2.4.3</version.jackson>
+		<version.slf4j>1.7.5</version.slf4j>
+		<swagger.version>2.4.0</swagger.version>
+		<org.springframework-security>3.2.3.RELEASE</org.springframework-security>
+	</properties>
+
+	<repositories>
+		<repository>
+			<id>redhat-techpreview-all-repository</id>
+			<url>https://maven.repository.redhat.com/techpreview/all/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>redhat-techpreview-all-repository</id>
+			<url>https://maven.repository.redhat.com/techpreview/all/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+
+	<modules>
+		<module>sample-authenticator-server</module>
+		<module>sample-rest-service-spring-jboss</module>
+		<module>sample-rest-service-spring-springboot</module>
+		<module>sample-frontend-agular</module>
+	</modules>
+
+	<dependencyManagement>
+		<dependencies>
+
+			<!-- Dependências do Spring Boot + Spring Cloud -->
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-starter-parent</artifactId>
+				<version>${spring.cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
+			<!-- Dependência do Bouncer Client -->
+			<dependency>
+				<groupId>br.com.softplan.bouncer</groupId>
+				<artifactId>bouncer-client-boot</artifactId>
+				<version>${bouncer.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>br.com.softplan.bouncer</groupId>
+				<artifactId>bouncer-client</artifactId>
+				<version>${bouncer.version}</version>
+				<exclusions>
+					<exclusion>
+						<artifactId>servlet-api</artifactId>
+						<groupId>javax.servlet</groupId>
+					</exclusion>
+					<exclusion>
+						<artifactId>opensaml</artifactId>
+						<groupId>org.opensaml</groupId>
+					</exclusion>
+					<exclusion>
+						<artifactId>slf4j-log4j12</artifactId>
+						<groupId>org.slf4j</groupId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
+			<dependency>
+				<groupId>com.fasterxml</groupId>
+				<artifactId>classmate</artifactId>
+				<version>0.8.0</version>
+			</dependency>
+
+			<dependency>
+				<groupId>io.paradoxical</groupId>
+				<artifactId>cassieq-core</artifactId>
+				<version>0.10</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-core</artifactId>
+				<version>${org.springframework-security}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-config</artifactId>
+				<version>${org.springframework-security}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-web</artifactId>
+				<version>${org.springframework-security}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.springfox</groupId>
+				<artifactId>springfox-swagger2</artifactId>
+				<version>${swagger.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.springfox</groupId>
+				<artifactId>springfox-swagger-ui</artifactId>
+				<version>${swagger.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+</project>

@@ -1,0 +1,66 @@
+<div class="panel panel-default" style='border: 1px solid; padding: 10px'>
+	<div class="panel-heading"><h4>Login via Single Sign-On</h4></div>
+	<div class="panel-body">
+		<p>
+		Este tipo de login utiliza o grant type <b>Implicit</b>, que redireciona o usuário para 
+		a tela de autorização e depois retorna com o token enviado via <em>location hash</em>.
+		A diferença deste com o <b>Authentication Code</b> é que este não exige a confiança
+		entre a aplicação e o servidor (não expõe o Client Key e Secret), e, 
+		portanto, deve ser mais restrito (token read-only).
+		</p>
+		<div style='text-align: center; width: 300px; margin: auto'>
+			<div ng-class="{'alert alert-info': !ssoError, 'alert alert-danger': ssoError}" ng-if="ssoMsg">
+				{{ssoMsg}}
+			</div>
+			<div class="form-group" style="float: left">
+				<span class="label label-default">Sem Scope</span><br/>
+				<input type="button" class="btn btn-primary" value="Autenticar" ng-click="ssoLogin()" />
+			</div>
+			<div class="form-group">
+				<span class="label label-default">Auto-Approved</span><br/>
+				<input type="button" class="btn btn-primary" value="Autenticar" ng-click="ssoLogin(true)" />
+			</div>
+		</div>
+	</div>
+</div>
+
+<br/>
+
+<div class="panel panel-default" style='border: 1px solid; padding: 10px'>
+	<div class="panel-heading"><h4>Login Direto (inseguro em SPA)</h4></div>
+	<div class="panel-body">
+		<p>
+		Este tipo de login utiliza o grant type <b>Resource Owner</b> que deve estabelecer confiança
+		entre a aplicação e o servidor, através do Client Key e Secret. Entretanto, numa aplicação
+		puramente JavaScript (SPA) estes valores ficarão expostos e, portanto,  não é aconselhável 
+		utilizar esta modalidade.
+		<p/>
+		<div style='text-align: center; width: 300px; margin: auto'>
+			<div ng-class="{'alert alert-info': !formError, 'alert alert-danger': formError}" ng-if="formMsg">
+				{{formMsg}}
+			</div>
+			<form role="form" ng-submit="directLogin()">
+				<div class="form-group">
+					<label for="username">Username:</label> <input type="text"
+						class="form-control" id="username" name="username" ng-model="credentials.username"/>
+				</div>
+				<div class="form-group">
+					<label for="password">Password:</label> <input type="password"
+						class="form-control" id="password" name="password" ng-model="credentials.password"/>
+				</div>
+				<button type="submit" class="btn btn-primary">Autenticar</button>
+			</form>
+		</div>
+		<p>
+		Uma alternativa segura seria utilizar o padrão <b>API Gateway</b>. A aplicação AngularJS 
+		consome serviços REST Java no próprio contexto, e este é encarregado de delegar as chamadas 
+		para os serviços correspondentes (<b>Proxy Reverso</b>).
+		</p> 
+		<p>
+		A vantagem é que não é necessário definir filtro de CORS, uma vez que as chamadas são para a mesma origem, 
+		e a autenticação pode ser gerenciada no contexto do Java, podendo armazenar as Client Key e Secret sem
+		expor no código HTML/JavaScript. A única desvantagem é ter que misturar código Java à aplicação Angular.
+		<p/>
+	</div>
+</div>
+

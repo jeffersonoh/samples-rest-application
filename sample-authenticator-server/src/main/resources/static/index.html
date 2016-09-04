@@ -1,0 +1,230 @@
+<!doctype html>
+<html>
+<head>
+<title>POC SCS OAuth Server</title>
+<link href="css/bootstrap.css" rel="stylesheet" />
+<link href="css/server.css" rel="stylesheet" />
+</head>
+
+<body>
+	<h1>POC Spring Cloud Security</h1>
+	<h2>OAuth Server - Servidor de Autenticação e Autorização</h2>
+	
+	<h3>Seções do Servidor</h3>
+	
+	<h4>Navegação</h4>
+	<ul>
+		<li><a href="/oauth-server/user">/user</a> - Usuário corrente</li>
+		<li><a href="/oauth-server/login">/login</a> - Formulário de login</li>
+		<li><a href="/oauth-server/logout">/logout</a> - Sair do sistema</li>
+		<li><a href="/oauth-server/clear">/clear</a> - Limpa os Tokens (não usar em produção)</li>
+	</ul>
+	
+	<h4>Endpoints OAuth</h4>
+	<ul>
+		<li><a href="/oauth-server/oauth/authorize">/oauth/authorize</a>
+			 - Endpoint OAuth para autorização pelo usuário e obtenção do <b>authorization code</b> (ou diretamente <b>access token</b> no grant type <b>implicit</b>)</li>
+		<li><a href="/oauth-server/oauth/token">/oauth/token</a>
+		     - Endpoint OAuth para validação de <b>autorization code</b> e obtenção <b>access token</b></li>
+	</ul>
+	
+	<h3>Credenciais</h3>
+	
+	<h4>Usuários Válidos</h4>
+	<table>
+		<tr><th>Username</th><th>Password</th><th>Role</th></tr>
+		<tr><td>username</td><td>password</td><td class="center">-</td></tr>
+		<tr><td>teste</td><td>teste</td><td>TESTER</td></tr>
+		<tr><td>admin</td><td>admin</td><td>ADMIN</td></tr>
+		<tr><td>api</td><td>api</td><td>API</td></tr>
+	</table>
+	
+	<h4>Clientes Válidos</h4>
+	<table>
+		<tr><th>Key</th><th>Secret</th><th>Grants</th><th>Scopes</th><th>Redirect</th></tr>
+		<tr>
+			<td>poc-key</td><td>poc-secret</td>
+			<td>authorization_code, implicit, password,<br/>client_credentials, refresh_token</td>
+			<td>openid (auto-approve), write,<br/>api (auto-approve)</td>
+			<td class="center">-</td>
+		</tr>
+		<tr>
+			<td>client-key</td><td>client-secret</td>
+			<td>authorization_code, refresh_token</td>
+			<td>openid (auto-approve)</td>
+			<td>http://www.client-app.com:8080/auth,<br/>localhost</td>
+		</tr>
+	</table>
+	
+	<h3>Autenticação OAuth (Grant Types)</h3>
+	
+	<h4>Grant: Authorization Code</h4>
+	
+	<p>
+	O usuário autenticado no servidor autoriza o aplicação cliente a acessar os recursos solicitados pelo <b>scope</b> 
+	da requisição.
+	<br/>
+	O servidor gera um <b>authorization code</b> e redireciona para o domínio conhecido da aplicação.
+	<br/>
+	A aplicação cliente então realiza uma comunicação direta com o servidor, se autentica via HTTP Basic (estabelece 
+	confiança) e troca o <b>authoziation code</b> pelo <b>access token</b> do usuário.
+	</p>
+	
+	<div class='command-box'>
+	<label>GET: primeira chamada via User-Agent</label>
+	<a href="/oauth-server/oauth/authorize?response_type=code&client_id=poc-key&redirect_uri=/oauth-server/parse">
+		/oauth-server/oauth/authorize ?
+		response_type=<b>code</b> &
+		client_id=<b>client-key</b> &
+		redirect_uri=<b>http://www.client-app.com:8080/auth</b>
+	</a>
+	
+	<label>POST: segunda chamada direta via Aplicação</label>
+	<code>
+		curl <b>client-key:client-secret</b>@localhost:7710/oauth-server/oauth/token -d grant_type=<b>authorization_code</b> -d redirect_uri=<b>http://www.client-app.com:8080/auth</b> -d code=<b>[GRANTED CODE]</b>
+	</code>
+	</div>
+	
+	<h4>Grant: Implicit</h4>
+	
+	<p>
+	O usuário autenticado no servidor autoriza o aplicação cliente a acessar os recursos solicitados pelo <b>scope</b> 
+	da requisição.
+	<br/>
+	O servidor gera diretamente o <b>access token</b> do usuário e redireciona para o domínio conhecido da aplicação.
+	<br/>
+	É menos seguro que o anterior, pois não é estabelecido uma confiança entre o servidor e a aplicação cliente,
+	então o <b>scope</b> do <b>access token</b> deve ser mais restrito (somente-leitura, por exemplo).
+	</p>
+	
+	<div class='command-box'>
+	<label>GET: chamada única via User-Agent</label>
+	<a href="/oauth-server/oauth/authorize?response_type=token&client_id=poc-key&redirect_uri=/oauth-server/parse">
+		/oauth-server/oauth/authorize ?
+		response_type=<b>token</b> &
+		client_id=<b>client-key</b> &
+		redirect_uri=<b>http://www.client-app.com:8080/auth</b>
+	</a>
+	</div>
+	
+	<h4>Grant: Resource Owner Credentials</h4>
+	
+	<p>
+	A aplicação cliente se autentica no servidor e solicita diretamente o <b>access token</b> do usuário em nome deste,
+	informando as credenciais do usuário que aplicação já possui previamente.
+	<br/>
+	Geralmente o usuário confia na apliação cliente e informa o usuário e senha diretamente nele, através
+	de um formulário por exemplo, e este por sua vez delega a autenticação para o servidor.
+	<br/>
+	Deve ser estabelecido uma confiança entre o Servidor OAuth e a aplicação cliente.
+	</p>
+	
+	<div class='command-box'>
+	<label>POST: chamada única via Aplicação</label>
+	<code>
+		curl <b>client-key:client-secret</b>@localhost:7710/oauth-server/oauth/token -d grant_type=<b>password</b> -d username=<b>username</b> -d password=<b>password</b>
+	</code>
+	</div>
+	
+	<h4>Grant: Client Credentials</h4>
+	
+	<p>
+	A aplicação cliente se autentica no servidor para receber um <b>access token</b> da própria aplicação, 
+	e então poder acessar outros serviços protegidos sem interação do usuário.
+	<br/>
+	Geralmente é usado para comunicação entre aplicações, onde basta estabelecer uma confiança entre elas
+	por meio do <b>access token</b>, sem dados do usuário.
+	<br/>
+	Deve ser estabelecido uma confiança entre o Servidor OAuth e a aplicação cliente.
+	</p>
+	
+	<div class='command-box'>
+	<label>POST: chamada única via Aplicação</label>
+	<code>
+		curl <b>client-key:client-secret</b>@localhost:7710/oauth-server/oauth/token -d grant_type=<b>client_credentials</b>
+	</code>
+	</div>
+	
+	<h4>Grant: Refresh Token</h4>
+	
+	<p>
+	Caso esteja habilitado o <b>refresh token</b> para a aplicação cliente, ao realizar autorização 
+	(<b>exceto implicit e client credentials</b>), o servidor irá retornar o <b>access token</b> e também
+	o <b>refresh token</b>.
+	<br/>
+	O <b>refresh token</b> é usado caso o <b>access token</b> do usuário expire ou não seja mais válido,
+	assim a aplicação troca o <b>refresh token</b> por um novo <b>access token</b> e <b>refresh token</b>.
+	<br/>
+	Deve ser estabelecido uma confiança entre o Servidor OAuth e a aplicação cliente.
+	</p>
+	
+	<div class='command-box'>
+	<label>POST: chamada única via Aplicação</label>
+	<code>
+		curl <b>client-key:client-secret</b>@localhost:7710/oauth-server/oauth/token -d grant_type=<b>refresh_token</b> -d refresh_token=<b>[REFRESH TOKEN]</b>
+	</code>
+	</div>
+	
+	<h4>Definição dos Parâmetros</h4>
+	
+	<table>
+		<tr><th>Parâmetro</th><th>Origem</th><th>Descrição</th></tr>
+		<tr>
+			<td>response_type</td>
+			<td>Request</td>
+			<td>Tipo de autorização via User-Agent (Endpoint <span class='code'>/oauth/authorize</span>)</td>
+		</tr>
+		<tr>
+			<td>grant_type</td>
+			<td>Request</td>
+			<td>Tipo de autorização direta via Aplicação (Endpoint <span class='code'>/oauth/token</span>)</td>
+		</tr>
+		<tr>
+			<td>client_id</td>
+			<td>Request</td>
+			<td>Chave da aplicação cliente</td>
+		</tr>
+		<tr>
+			<td>redirect_uri</td>
+			<td>Request</td>
+			<td>Endereço de retorno do authorization code/token e validação</td>
+		</tr>
+		<tr>
+			<td>code</td>
+			<td>Request/Response</td>
+			<td>Código de autorização para trocar pelo token</td>
+		</tr>
+		<tr>
+			<td>username</td>
+			<td>Request</td>
+			<td>Nome de usuário para acesso por Resource Owner Credentials</td>
+		</tr>
+		<tr>
+			<td>password</td>
+			<td>Request</td>
+			<td>Senha de usuário para acesso por Resource Owner Credentials</td>
+		</tr>
+		<tr>
+			<td>error</td>
+			<td>Response</td>
+			<td>Chave do erro na resposta da obtenção ou validação do token</td>
+		</tr>
+		<tr>
+			<td>error_description</td>
+			<td>Response</td>
+			<td>Descrição do erro na resposta da obtenção ou validação do token</td>
+		</tr>
+		<tr>
+			<td>scope</td>
+			<td>Request/Response</td>
+			<td>Escopo de acesso solicitado pela aplicação e autorizado pelo usuário (opcional)</td>
+		</tr>
+		<tr>
+			<td>state</td>
+			<td>Request/Response</td>
+			<td>Identificador de estado entre as requisições (opcional)</td>
+		</tr>
+	</table>
+		
+</body>
+</html>

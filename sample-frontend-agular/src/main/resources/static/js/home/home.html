@@ -1,0 +1,9 @@
+<p>Essa pagina é feita em  AngularJS para demostração de acesso a um  backend protegido (OAuth Server)</p>
+<div ng-show="authenticated()">
+     <p>O usuário backend é <b>{{greeting.user}}</b></p>
+     <p>O ID é <b>{{greeting.id}}</b></p>
+     <p>O content é <b>{{greeting.content}}</b></p>
+</div>
+<div ng-show="!authenticated()">
+	<p>Faça login para ter acesso a aplicação</p>
+</div>

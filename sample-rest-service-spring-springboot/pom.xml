@@ -1,0 +1,44 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  
+    <parent>
+        <groupId>br.com.sample.spring</groupId>
+        <artifactId>samples</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../</relativePath>
+    </parent>
+  
+	<artifactId>sample-rest-service-spring-springboot</artifactId>
+	<packaging>jar</packaging>
+
+	<name>sample-rest-service-spring-springboot</name>
+	<description>Sample OAuth Backend Rest springboot</description>
+
+	<dependencies>
+	
+		<!-- Spring Cloud Security -->
+    	<dependency>
+	        <groupId>org.springframework.cloud</groupId>
+	        <artifactId>spring-cloud-security</artifactId>
+	    </dependency>
+
+		<!-- OAuth Support (obrigatório) -->
+		<dependency>
+			<groupId>org.springframework.security.oauth</groupId>
+			<artifactId>spring-security-oauth2</artifactId>
+		</dependency>
+
+	</dependencies>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+	  
+  
+  </project>
